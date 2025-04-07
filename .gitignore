@@ -1,0 +1,16 @@
+# Node
+node_modules/
+dist/
+.env
+
+# WebStorm/JetBrains
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# System
+.DS_Store
+Thumbs.db
