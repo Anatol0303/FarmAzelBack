@@ -1,4 +1,3 @@
-import SurprizeBackTo from "./SurprizeBackTo"
 
 export default interface NewFarmerDto {
     login:string;
@@ -9,6 +8,5 @@ export default interface NewFarmerDto {
     phone:number;
     mail:string;
     postCode:number;
-    products:string[];
-    surprizeBacks: SurprizeBackTo[];
+    role:string;
 }

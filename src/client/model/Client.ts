@@ -1,18 +1,19 @@
 import { Document, Schema, model } from 'mongoose';
 
-export interface IFarmer extends Document {
+
+export interface IClient extends Document {
     login: string;
     password: string;
     firstName: string;
     lastName: string;
-    address: string;
+    address:string;
     phone: number;
     mail: string;
-    postCode: number;
+    postCode:number;
     role: string;
 }
 
-const farmerSchema = new Schema<IFarmer>({
+const clientSchema = new Schema<IClient>({
     login: { type: String, required: true },
     password: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -21,7 +22,7 @@ const farmerSchema = new Schema<IFarmer>({
     phone: { type: Number, required: true },
     mail: { type: String, required: false },
     postCode: { type: Number, required: false },
-    role: { type: String, default: 'farmer'}
+    role: { type: String, default: 'client' }
 });
 
-export const Farmer = model<IFarmer>('Farmer', farmerSchema);
+export const Client = model<IClient>('Client', clientSchema);

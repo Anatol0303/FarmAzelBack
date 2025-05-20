@@ -1,10 +1,10 @@
 import PostServiceImpl from "../../../src/client/service/PostServiceImpl";
-import {Post as P} from "../../../src/client/models/Post";
+import {Post as P} from "../../../src/client/model/Post";
 import CommentDto from "../../../src/client/dto/CommentDto";
 import PostDto from "../../../src/client/dto/PostDto";
 
 
-jest.mock('../../../src/client/models/Post');
+jest.mock('../../../src/client/model/Post');
 
 
 describe('PostServiceImpl.addComment', () => {

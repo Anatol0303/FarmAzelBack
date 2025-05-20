@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express, {Application, NextFunction, Request, Response} from 'express';
 import {useExpressServer} from "routing-controllers";
-//import ClientController from "./client/controllers/ClientController";
+import ClientController from "./client/controllers/ClientController";
 import dotenv from 'dotenv';
 import * as mongoose from "mongoose";
 import FarmerController from "./farmer/controllers/FarmerController";
@@ -27,7 +27,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 })
 
 useExpressServer(app, {
-    controllers: [//ClientController,
+    controllers: [ClientController,
         FarmerController]
 });
 

@@ -1,0 +1,547 @@
+{
+	"info": {
+		"_postman_id": "13f93ac8-1528-456e-95b3-d1a730c441c5",
+		"name": "FarmerProject",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40125397"
+	},
+	"item": [
+		{
+			"name": "/apifarm/registerFarmer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"Anatoly14\",\r\n    \"password\":\"Anatoly\",\r\n    \"firstName\":\"Anatoly\",\r\n    \"lastName\":\"Anatoly\",\r\n    \"address\":\"Netanya, Chernyahovski, 2, apartament 8\",\r\n    \"phone\":\"0554583467\",\r\n    \"mail\":\"anatoly@mail.ru\",\r\n    \"postCode\":\"123456789\",\r\n    \"products\":[\"Apples\", \"Bananos\", \"Cucombers\", \"Tomatos\"],\r\n    \"surprizeBacks\":[]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/registerFarmer",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"registerFarmer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/apifarm/loginFarmer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NDAzNDY5NSwiZXhwIjoxNzQ0MDM4Mjk1fQ.6-jY_1Aku6r8jpAq_LcdpwYfQrlaz16G3DIoggE1hNE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"login\":\"Anatoly1\",\r\n \"password\":\"Anatoly\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/loginFarmer",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"loginFarmer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/apifarm/removeFarmer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkiLCJmaXJzdE5hbWUiOiJBbmF0b2x5IiwiaWF0IjoxNzQzNjc2NjAwLCJleHAiOjE3NDM2ODAyMDB9.5ilX0cJaOC7lhD-QtLuTaebjk2ZSc_ftX1AJc5bUzJ8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/farmer/{{login}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"farmer",
+						"{{login}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/apifarm/updateFarmer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NDAzNjQ5MiwiZXhwIjoxNzQ0MDQwMDkyfQ.fv3qXQwkVOw8hNkuZxgHbUPkWi9JqUzghMQsdRd9_us",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"password\": \"Anatoly\",\r\n\"firstName\": \"Anatoly\", \r\n\"lastName\": \"Anatoly\",\r\n\"address\": \"Netanya, Chernyahovski, 2, apartament 8\",\r\n\"phone\": 554583467,\r\n\"mail\": \"anatoly@mail.ru\",\r\n\"postCode\": 123456789,\r\n\"products\": [\r\n        \"Apples\",\r\n        \"Bananos\",\r\n        \"Cucombers\",\r\n        \"Tomatos\"\r\n    ],\r\n    \"surprizeBacks\":[]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/farmer/{{login}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"farmer",
+						"{{login}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addSB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var template = `\r",
+							"<style type=\"text/css\">\r",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+							"    .tftable tr {background-color:#ffffff;}\r",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+							"    .tftable tr:hover {background-color:#e0ffff;}\r",
+							"</style>\r",
+							"\r",
+							"<table class=\"tftable\" border=\"1\">\r",
+							"    <tr>\r",
+							"        <th>Quantity</th>\r",
+							"        <th>Product</th>\r",
+							"        <th>ID Type</th>\r",
+							"        <th>ID Data</th>\r",
+							"    </tr>\r",
+							"    \r",
+							"    {{#each response._surprizeBacks}}\r",
+							"        <tr>\r",
+							"            <td>{{quantity}}</td>\r",
+							"            <td>{{product}}</td>\r",
+							"            <td>{{_id.buffer.type}}</td>\r",
+							"            <td>{{_id.buffer.data.[0]}}</td>\r",
+							"        </tr>\r",
+							"    {{/each}}\r",
+							"</table>\r",
+							"`;\r",
+							"\r",
+							"function constructVisualizerPayload() {\r",
+							"    return {response: pm.response.json()}\r",
+							"}\r",
+							"\r",
+							"pm.visualizer.set(template, constructVisualizerPayload());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkzMSIsImZpcnN0TmFtZSI6IkFuYXRvbHkiLCJpYXQiOjE3NDY2OTc3NTksImV4cCI6MTc0NjcwMTM1OX0.t6kxm7Y5NYPxNVow5JSmr6-WAEZB5I0H1uGC6Svylzo}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"1\",\r\n    \"product\": \"apples\",\r\n    \"nameSB\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/addSurprizeBack",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"addSurprizeBack"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delSB",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzIyNzE3NiwiZXhwIjoxNzQ3MjMwNzc2fQ.Cf-RACemmeJdDLDD3q3EXd63e1UwmJg8xR3mABu0Dvk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/removeSurprizeBack/{{nameSB}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"removeSurprizeBack",
+						"{{nameSB}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delOrderSB_notWork",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzMwMjMxOCwiZXhwIjoxNzQ3MzA1OTE4fQ.heCKT50quZRLQA8RjwmNODsWfRTAh8XWhw0l3i0hNmw}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"IdSB\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/deleteOrderSB/{{nameSB}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"deleteOrderSB",
+						"{{nameSB}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateSB",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"quantity\": 10,\r\n\"product\": \"Apples\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/surprizeBack/{{login}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"surprizeBack",
+						"{{login}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InfOrdersSB",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"quantity\": 10,\r\n\"product\": \"Apples\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/surprizeBack/order/{{login}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"surprizeBack",
+						"order",
+						"{{login}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateFarmerPassword",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkNsaWVudDIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzMzNTA2MCwiZXhwIjoxNzQ3MzM4NjYwfQ.rMHOVDSdtlpF6QoUaSE3eNNrS291Ge2N1UAAYVcwGNQ}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"password\": \"Anatoly\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/updateFarmerPassword",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"updateFarmerPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "infFarmerByLogin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"quantity\": 10,\r\n\"product\": \"Apples\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/infFarmerByLogin",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"infFarmerByLogin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "infAllFarmers",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"quantity\": 10,\r\n\"product\": \"Apples\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/infAllFarmers",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"infAllFarmers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InfFarmersByProduct",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"quantity\": 10,\r\n\"product\": \"Apples\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/apifarm/InfFarmersByProductToFarmer/{{product}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"apifarm",
+						"InfFarmersByProductToFarmer",
+						"{{product}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "http://localhost:8080",
+			"type": "default"
+		},
+		{
+			"key": "login",
+			"value": "Anatoly1",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkzMSIsImZpcnN0TmFtZSI6IkFuYXRvbHkiLCJpYXQiOjE3NDY2OTUwNzQsImV4cCI6MTc0NjY5ODY3NH0.pW5CDMKU2_z9_VXKWtrW99-tGG2G0_P-WZxGR_gd3oo",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkzMSIsImZpcnN0TmFtZSI6IkFuYXRvbHkiLCJpYXQiOjE3NDY2OTUwNzQsImV4cCI6MTc0NjY5ODY3NH0.pW5CDMKU2_z9_VXKWtrW99-tGG2G0_P-WZxGR_gd3oo",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkzMSIsImZpcnN0TmFtZSI6IkFuYXRvbHkiLCJpYXQiOjE3NDY2OTUwNzQsImV4cCI6MTc0NjY5ODY3NH0.pW5CDMKU2_z9_VXKWtrW99-tGG2G0_P-WZxGR_gd3oo",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkFuYXRvbHkzMSIsImZpcnN0TmFtZSI6IkFuYXRvbHkiLCJpYXQiOjE3NDY2OTc3NTksImV4cCI6MTc0NjcwMTM1OX0.t6kxm7Y5NYPxNVow5JSmr6-WAEZB5I0H1uGC6Svylzo",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzIyNzE3NiwiZXhwIjoxNzQ3MjMwNzc2fQ.Cf-RACemmeJdDLDD3q3EXd63e1UwmJg8xR3mABu0Dvk",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzIzNDgyMiwiZXhwIjoxNzQ3MjM4NDIyfQ.gdCnCqS9Cmej1EHalahT3c3fqRVvz61tl63xO-4Oxnk",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzI1MjAxMywiZXhwIjoxNzQ3MjU1NjEzfQ.GFI-2aHexXmFHBIen8Z_6uSqwi7XuLQ30HIxzdLlWJs",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkZhcm1lcjIxIiwiZmlyc3ROYW1lIjoiQW5hdG9seSIsImlhdCI6MTc0NzMwMjMxOCwiZXhwIjoxNzQ3MzA1OTE4fQ.heCKT50quZRLQA8RjwmNODsWfRTAh8XWhw0l3i0hNmw",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

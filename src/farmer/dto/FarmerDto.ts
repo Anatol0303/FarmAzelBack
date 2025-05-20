@@ -1,4 +1,3 @@
-import SurprizeBackTo from "./SurprizeBackTo"
 
 export default class FarmerDto {
     private _login:string;
@@ -8,10 +7,9 @@ export default class FarmerDto {
     private _phone:number;
     private _mail:string;
     private _postCode:number;
-    private _products:string[];
-    private _surprizeBacks: SurprizeBackTo[];
+    private _role:string;
 
-    constructor(login: string, firstName: string, lastName: string, address: string, phone: number, mail: string, postCode: number, products: string[], surprizeBacks:SurprizeBackTo[]) {
+    constructor(login: string, firstName: string, lastName: string, address: string, phone: number, mail: string, postCode: number, role: string) {
         this._login = login;
         this._firstName = firstName;
         this._lastName = lastName;
@@ -19,8 +17,7 @@ export default class FarmerDto {
         this._phone = phone;
         this._mail = mail;
         this._postCode = postCode;
-        this._products = products;
-        this._surprizeBacks = surprizeBacks;
+        this._role = role;
     }
 
 
@@ -80,19 +77,12 @@ export default class FarmerDto {
         this._postCode = value;
     }
 
-    get products(): string[] {
-        return this._products;
+    get role(): string{
+        return this._role;
     }
 
-    set products(value: string[]) {
-        this._products = value;
+    set role(value: string) {
+        this._role = value;
     }
 
-    get surprizeBacks(): SurprizeBackTo[] {
-        return this._surprizeBacks;
-    }
-
-    set surprizeBacks(value: SurprizeBackTo[]) {
-        this._surprizeBacks = value;
-    }
 }
