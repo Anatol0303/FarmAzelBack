@@ -13,7 +13,7 @@ const surprizeBackSchema = new Schema<ISurprizeBack>({
     loginFarmer: { type: String, required: true },
     description: { type: String, required: true },
     product: { type: String, required: true },
-    loginClient: { type: String, required: false  },
+    loginClient: { type: String, required: true },
     nameSB: { type: String, required: true },
 });
 

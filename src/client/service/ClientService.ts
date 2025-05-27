@@ -17,9 +17,9 @@ export default interface ClientService {
 
     InfSurprizeBacksByProduct(product:string):Promise<SurprizeBackTo[]>;
 
-    createOrderSB(login: string, nameSB: string): Promise<SurprizeBackTo>;
+    createOrderSB(login: string, nameSB: string, loginFarmer: string): Promise<SurprizeBackTo>;
 
-    removeOrderSB(login: string, nameSB: string): Promise<SurprizeBackTo>;
+    removeOrderSB(login: string, nameSB: string, loginFarmer: string): Promise<SurprizeBackTo>;
 
     InfSurprizeBacksByFarmer(loginFarmer: string): Promise<SurprizeBackTo[]>;
 

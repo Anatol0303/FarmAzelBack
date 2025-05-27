@@ -17,9 +17,9 @@ import {Request, Response} from 'express';
 import {AuthenticationMiddleware} from "../../farmer/Middleware/AuthenticationMiddleware";
 //import {AuthorizationMiddleware} from "../Middleware/AuthorizationMiddleware";
 import NewClientDto from "../dto/NewClientDto";
-import {encodeBase64} from "../../utils/utilsForPassword";
-import {Client} from "../model/Client";
-import ClientDto from "../dto/ClientDto";
+//import {encodeBase64} from "../../utils/utilsForPassword";
+//import {Client} from "../model/Client";
+//import ClientDto from "../dto/ClientDto";
 
 
 
@@ -73,27 +73,29 @@ export default class ClientController {
     }
 
     @UseBefore(AuthenticationMiddleware)
-    @Put('/createOrderSB/:nameSB')
+    @Put('/createOrderSB/:nameSB/:loginFarmer')
     async createOrderSB(
         @Param('nameSB') nameSB: string,
+        @Param('loginFarmer') loginFarmer: string,
         @Req() req: Request,
         @Res() res: Response,
     )
     {
         const login = req.body.user.login;
-        return await this.clientService.createOrderSB(login,nameSB);
+        return await this.clientService.createOrderSB(login, nameSB, loginFarmer);
     }
 
     @UseBefore(AuthenticationMiddleware)
-    @Put('/removeOrderSB/:nameSB')
+    @Put('/removeOrderSB/:nameSB/:loginFarmer')
     async removeOrderSB(
         @Param('nameSB') nameSB: string,
+        @Param('loginFarmer') loginFarmer: string,
         @Req() req: Request,
         @Res() res: Response,
     )
     {
         const login = req.body.user.login;
-        return await this.clientService.removeOrderSB(login, nameSB);
+        return await this.clientService.removeOrderSB(login, nameSB, loginFarmer);
     }
 
     @UseBefore(AuthenticationMiddleware)

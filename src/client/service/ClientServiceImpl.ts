@@ -81,14 +81,14 @@ export default class ClientServiceImpl implements ClientService {
         });
     }
 
-    async createOrderSB(login: string, nameSB: string): Promise<SurprizeBackTo> {
+    async createOrderSB(login: string, nameSB: string, loginFarmer: string): Promise<SurprizeBackTo> {
         const SurprizeBackToOrder = await SurprizeBack.findOne({
-            nameSB: nameSB
+            nameSB: nameSB, loginFarmer: loginFarmer
         });
         if (!SurprizeBackToOrder) throw new Error('ERROR! No surprizeback you want to order');
         if (SurprizeBackToOrder.loginClient !== "None") throw new Error('ORDER IS IMPOSSIBLE! This surprizeback have been ordered already');
 
-        const orderedSurprizeBack = await SurprizeBack.findOneAndUpdate({nameSB: nameSB}, {
+        const orderedSurprizeBack = await SurprizeBack.findOneAndUpdate({nameSB: nameSB, loginFarmer: loginFarmer}, {
             $set: {
                 loginClient: login
             }
@@ -97,12 +97,12 @@ export default class ClientServiceImpl implements ClientService {
             orderedSurprizeBack!.loginClient, orderedSurprizeBack!.nameSB);
     }
 
-    async removeOrderSB(login: string, nameSB: string): Promise<SurprizeBackTo> {
+    async removeOrderSB(login: string, nameSB: string, loginFarmer: string): Promise<SurprizeBackTo> {
         const SurprizeBackToRemoveOrder = await SurprizeBack.findOne({
-            loginClient: login, nameSB: nameSB
+            loginClient: login, nameSB: nameSB, loginFarmer: loginFarmer
         });
         if (!SurprizeBackToRemoveOrder) throw new Error('ERROR! This surprizeback does not exist or exists, but not ordered or ordered not by you');
-        const removeOrderedSurprizeBack = await SurprizeBack.findOneAndUpdate({nameSB: nameSB}, {
+        const removeOrderedSurprizeBack = await SurprizeBack.findOneAndUpdate({nameSB: nameSB, loginFarmer: loginFarmer}, {
             $set: {
                 loginClient: "None"
             }
