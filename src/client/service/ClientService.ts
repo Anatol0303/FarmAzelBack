@@ -6,7 +6,9 @@ import FarmerDto from "../../farmer/dto/FarmerDto";
 
 export default interface ClientService {
 
-    registerClient(сlientRegDto: NewClientDto): Promise<ClientDto>;
+    
+
+    registerClient(сlientRegDto: NewClientDto): Promise<string>;
 
     loginClient(login: string, password: string): Promise<string>;
 
@@ -27,7 +29,13 @@ export default interface ClientService {
 
     InfFarmersByProduct(product: string): Promise<String[]>
 
+    infFarmerByLogin(loginFarmer: string): Promise<FarmerDto>;
+
+    infAllFarmers(): Promise<FarmerDto[]>;
+
     InfMyOrderedSurprizeBacks(login: string): Promise<SurprizeBackTo[]>;
+
+    infClientByLogin(loginClient: string): Promise<ClientDto>;
 
     updateClientPassword(login: string, password:string): Promise<ClientDto>;
 

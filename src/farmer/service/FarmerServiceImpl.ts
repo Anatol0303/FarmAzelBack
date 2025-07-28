@@ -2,7 +2,7 @@ import FarmerService from "./FarmerService";
 import NewFarmerDto from "../dto/NewFarmerDto";
 import FarmerDto from "../dto/FarmerDto";
 import {Farmer} from "../model/Farmer";
-import {ForbiddenError, NotFoundError} from "routing-controllers";
+import {ForbiddenError, HttpError} from "routing-controllers";
 import {encodeBase64} from "../../utils/utilsForPassword";
 import jwt from "jsonwebtoken";
 import {SurprizeBack} from "../../surprizeBack/model/SurprizeBack";
@@ -10,10 +10,11 @@ import SurprizeBackToSchema from "../../surprizeBack/dto/SurprizeBackTo";
 import SurprizeBackTo from "../../surprizeBack/dto/SurprizeBackTo";
 import ClientDto from "../../client/dto/ClientDto";
 import {Client} from "../../client/model/Client";
+import { NotFoundError, BadRequestError } from 'routing-controllers';
 
 export default class FarmerServiceImpl implements FarmerService {
 
-    async registerFarmer(newFarmerDto: NewFarmerDto): Promise<FarmerDto> {
+        async registerFarmer(newFarmerDto: NewFarmerDto): Promise<string> {
         let encodePass = encodeBase64(newFarmerDto.password);
         const newFarmer = new Farmer({
             ...newFarmerDto,
@@ -24,8 +25,10 @@ export default class FarmerServiceImpl implements FarmerService {
             throw new Error(`User with login ${newFarmer.login} already exists`);
         }
         const res = await newFarmer.save();
-        return new FarmerDto(res.login, res.firstName, res.lastName, res.address,
-            res.phone, res.mail, res.postCode, res.role);
+
+        return jwt.sign({login: newFarmer.login, role: newFarmer.role}, '' + process.env.JWT_SECRET
+            , {expiresIn: process.env.EXPIRED_TIME as any});
+
     }
 
     async loginFarmer(login: string, password: string): Promise<string> {
@@ -38,7 +41,7 @@ export default class FarmerServiceImpl implements FarmerService {
         if (pass !== encodePass) {
             throw new ForbiddenError(`Password not valid`);
         }
-        return jwt.sign({login: farmer.login, firstName: farmer.firstName}, '' + process.env.JWT_SECRET
+        return jwt.sign({login: farmer.login, role: farmer.role}, '' + process.env.JWT_SECRET
             , {expiresIn: process.env.EXPIRED_TIME as any});
     }
 
@@ -98,23 +101,29 @@ export default class FarmerServiceImpl implements FarmerService {
             findsurprizeBack.loginClient, findsurprizeBack.nameSB);
     }
 
+    async updateSB(login: string, description: string, product: string, nameSB: string): Promise<SurprizeBackTo> {
+        const findsurprizeBack = await SurprizeBack.findOne({ loginFarmer: login, nameSB });
+        if (!findsurprizeBack) throw new NotFoundError(`You do not have surprizeBack with name ${nameSB} `);
 
-     async updateSB(login: string, description: string, product: string, nameSB: string): Promise<SurprizeBackTo> {
-         const findsurprizeBack = await SurprizeBack.findOne({loginFarmer: login, nameSB: nameSB});
-         if (!findsurprizeBack) throw new Error(`Your surprizeBack with nameSB = ${nameSB} does not exist`);
+        if (findsurprizeBack.loginClient !== 'None')
+            throw new BadRequestError('Cannot update ORDERED surprizeBack');
 
-         if (findsurprizeBack.loginClient !== "None") throw new Error('Cannot update ORDERED surprizeBack');
-         const updatedSurprizeBack = await SurprizeBack.findOneAndUpdate({loginFarmer: login, nameSB: nameSB}, {
-             $set: {
-                 description: description, product: product, nameSB: nameSB
-             }
-         }, {new: true});
+        const updatedSurprizeBack = await SurprizeBack.findOneAndUpdate(
+            { loginFarmer: login, nameSB },
+            { $set: { description, product, nameSB } },
+            { new: true }
+        );
 
-         return new SurprizeBackTo(updatedSurprizeBack!.loginFarmer, updatedSurprizeBack!.description, updatedSurprizeBack!.product,
-             updatedSurprizeBack!.loginFarmer, updatedSurprizeBack!.nameSB);
-     }
+        return new SurprizeBackTo(
+            updatedSurprizeBack!.loginFarmer,
+            updatedSurprizeBack!.description,
+            updatedSurprizeBack!.product,
+            updatedSurprizeBack!.loginClient,
+            updatedSurprizeBack!.nameSB
+        );
+    }
+
     async InfOrdersSB(login: string): Promise<SurprizeBackTo[]> {
-
 
         const ordered = await SurprizeBack.find({loginFarmer:login,
             loginClient: {$ne:"None"}});
@@ -177,18 +186,58 @@ export default class FarmerServiceImpl implements FarmerService {
         });
     }
 
+    async InfAllProducts(): Promise<String[]> {
+        const SurprizeBacks = await SurprizeBack.find();
+        if (SurprizeBacks.length === 0) throw new Error('ERROR! Still no surprizebacks in this application ');
+        const products: string[] = [];
+        SurprizeBacks.forEach(surprizeback => {
+            if (surprizeback.product && !products.includes(surprizeback.product)) products.push(surprizeback.product)
+        })
+        return products;
+    }
+
+    async InfSurprizeBacksByFarmer(loginFarmer: string): Promise<SurprizeBackTo[]> {
+        const farmer = await Farmer.findOne({login: loginFarmer});
+        if (farmer === null) {
+            throw new Error(`Farmer with login ${loginFarmer} not found`);
+        }
+
+        const SurprizeBacksByFarmer = await SurprizeBack.find({
+            loginFarmer: loginFarmer
+        });
+        if (SurprizeBacksByFarmer.length === 0) throw new Error('No surprizebacks by farmer you are looking for');
+        return SurprizeBacksByFarmer.map(surprizeback => {
+            return new SurprizeBackTo(
+                surprizeback!.loginFarmer, surprizeback!.description,
+                surprizeback!.product, surprizeback!.loginClient, surprizeback!.nameSB)
+        });
+    }
+
+
     async InfFarmersByProduct(product: string): Promise<String[]> {
         const SurprizeBacksByProduct = await SurprizeBack.find({
             product: product
         });
-        if (SurprizeBacksByProduct.length === 0) throw new Error('ERROR! No surprizebacks with product you are looking for');
+        if (SurprizeBacksByProduct.length === 0) throw new Error('No farmers with product you are looking for');
         const farmers: string[] = [];
         SurprizeBacksByProduct.forEach(surprizeback => {
             if (surprizeback.loginFarmer &&
                 !farmers.includes(surprizeback.loginFarmer)) farmers.push(surprizeback.loginFarmer)
         });
         return farmers;
-
     }
+
+    async infSBByNameSB(login: string, nameSB:string):Promise<SurprizeBackTo> {
+
+        const surprizeback = await SurprizeBack.findOne({loginFarmer: login,nameSB: nameSB});
+        if (surprizeback === null) {
+            throw new Error(`You don't have surprizeBack with name ${nameSB}`);
+
+        }
+
+        return new SurprizeBackTo(surprizeback.loginFarmer, surprizeback.description, surprizeback.product, surprizeback.loginClient,
+            surprizeback.nameSB);
+    }
+    
 
 }

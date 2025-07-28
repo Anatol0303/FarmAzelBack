@@ -1,4 +1,5 @@
 export function encodeBase64(password:string):string{
+    if (!password) throw new Error('Password must be provided');
     return Buffer.from(password).toString('base64');
 }
 

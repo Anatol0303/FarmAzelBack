@@ -11,7 +11,7 @@ import {SurprizeBack} from "../../surprizeBack/model/SurprizeBack";
 import FarmerDto from "../../farmer/dto/FarmerDto";
 export default class ClientServiceImpl implements ClientService {
 
-    async registerClient(newClientDto: NewClientDto): Promise<ClientDto> {
+    async registerClient(newClientDto: NewClientDto): Promise<string> {
         let encodePass = encodeBase64(newClientDto.password);
         const newClient = new Client({
             ...newClientDto,
@@ -19,14 +19,15 @@ export default class ClientServiceImpl implements ClientService {
         });
         const checkClient = await Client.findOne({login: newClient.login});
         if (checkClient) {
-            throw new Error(`Client with login ${newClient.login} already exists`);
+            throw new Error(`User with login ${newClient.login} already exists`);
         }
         const res = await newClient.save();
 
-        return new ClientDto(res.login, res.firstName, res.lastName, res.address,
-            res.phone, res.mail, res.postCode, res.role//, res.products, res.surprizeBacks
-        );
+        return jwt.sign({login: newClient.login, role: newClient.role}, '' + process.env.JWT_SECRET
+            , {expiresIn: process.env.EXPIRED_TIME as any});
     }
+
+
 
     async loginClient(login: string, password: string): Promise<string> {
         const client = await Client.findOne({login: login});
@@ -38,7 +39,7 @@ export default class ClientServiceImpl implements ClientService {
         if (pass !== encodePass) {
             throw new Error(`Password not valid`);
         }
-        return jwt.sign({login: client.login, firstName: client.firstName}, '' + process.env.JWT_SECRET
+        return jwt.sign({login: client.login, role: client.role}, '' + process.env.JWT_SECRET
             , {expiresIn: process.env.EXPIRED_TIME as any});
     }
 
@@ -69,6 +70,20 @@ export default class ClientServiceImpl implements ClientService {
         );
     }
 
+    async infClientByLogin(loginClient: string): Promise<ClientDto> {
+
+        const client = await Client.findOne({login: loginClient});
+        if (client === null) {
+            throw new NotFoundError(`Client with login ${loginClient} not found`);
+            //throw new Error(`Farmer with login ${loginFarmer} not found`);
+        }
+
+        return new ClientDto(client.login, client.firstName, client.lastName, client.address,
+            client.phone, client.mail, client.postCode, client.role);
+    } 
+    
+    
+    
     async InfSurprizeBacksByProduct(product: string): Promise<SurprizeBackTo[]> {
         const SurprizeBacksByProduct = await SurprizeBack.find({
             product: product
@@ -128,6 +143,19 @@ export default class ClientServiceImpl implements ClientService {
         });
     }
 
+    async infFarmerByLogin(loginFarmer: string): Promise<FarmerDto> {
+
+        const farmer = await Farmer.findOne({login: loginFarmer});
+        if (farmer === null) {
+            throw new NotFoundError(`Farmer with login ${loginFarmer} not found`);
+            //throw new Error(`Farmer with login ${loginFarmer} not found`);
+        }
+
+        return new FarmerDto(farmer.login, farmer.firstName, farmer.lastName, farmer.address,
+            farmer.phone, farmer.mail, farmer.postCode, farmer.role);
+    }
+
+
     async InfAllProducts(): Promise<String[]> {
         const SurprizeBacks = await SurprizeBack.find();
         if (SurprizeBacks.length === 0) throw new Error('ERROR! Still no surprizebacks in this application ');
@@ -138,11 +166,25 @@ export default class ClientServiceImpl implements ClientService {
         return products;
     }
 
+    async infAllFarmers(): Promise<FarmerDto[]> {
+        const farmersByFormatDataBase = await Farmer.find();
+        if (farmersByFormatDataBase.length === 0) throw new Error('ERROR! Still no farmers registrated in this application');
+        const farmersByFormatUsual:FarmerDto[] = [];
+        return farmersByFormatDataBase.map(farmer => {
+            return new FarmerDto(
+                farmer.login, farmer.firstName, farmer.lastName, farmer.address,
+                farmer.phone, farmer.mail, farmer.postCode, farmer.role)
+        });
+    }
+
+
+
+
     async InfFarmersByProduct(product: string): Promise<String[]> {
         const SurprizeBacksByProduct = await SurprizeBack.find({
             product: product
         });
-        if (SurprizeBacksByProduct.length === 0) throw new Error('ERROR! No surprizebacks with product you are looking for');
+        if (SurprizeBacksByProduct.length === 0) throw new Error('ERROR! No farmers with product you are looking for');
         const farmers: string[] = [];
         SurprizeBacksByProduct.forEach(surprizeback => {
             if (surprizeback.loginFarmer &&

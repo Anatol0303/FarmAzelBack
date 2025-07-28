@@ -9,7 +9,8 @@ import {
     Put,
     Req,
     Res,
-    UseBefore
+    UseBefore,
+    BadRequestError
 } from "routing-controllers";
 import ClientService from "../service/ClientService";
 import ClientServiceImpl from "../service/ClientServiceImpl";
@@ -17,22 +18,17 @@ import {Request, Response} from 'express';
 import {AuthenticationMiddleware} from "../../farmer/Middleware/AuthenticationMiddleware";
 //import {AuthorizationMiddleware} from "../Middleware/AuthorizationMiddleware";
 import NewClientDto from "../dto/NewClientDto";
-//import {encodeBase64} from "../../utils/utilsForPassword";
-//import {Client} from "../model/Client";
-//import ClientDto from "../dto/ClientDto";
-
-
 
 @Controller('/apifarm')
 export default class ClientController {
-
     clientService: ClientService = new ClientServiceImpl();
-
+    
     @Post("/registerClient")
-    registerClient(@Body()newClientDto: NewClientDto) {
-        return this.clientService.registerClient(newClientDto);
+    async registerClient(@Body() newClientDto: NewClientDto, @Res() res: Response) {
+        const token = await this.clientService.registerClient(newClientDto).catch((err: any) => res.send(err));
+        return res.json({ token });
     }
-
+    
     @Post("/loginClient")
     async loginClient(@Body() loginClientDto: { login: string, password: string }, @Res() res: Response) {
         try {
@@ -44,21 +40,50 @@ export default class ClientController {
     }
 
     @UseBefore(AuthenticationMiddleware)
-    @Delete('/deleteClient')
-    async removeClientByLogin(
-                              @Req() req: Request,
-                              @Res() res: Response) {
-        const login = req.body.user.login;
-
-        return await this.clientService.removeClientByLogin(login).catch((err: any) => res.status(404).send(err));
+    @Get("/infClientByLogin/:loginClient")
+    async infClientByLogin(@Param("loginClient") loginClient: string, @Req() req: Request, @Res() res: Response) {
+        return await this.clientService.infClientByLogin(loginClient).catch((err: any) => res.status(404).send(err));
     }
 
     @UseBefore(AuthenticationMiddleware)
-    @Put('/updateClient')
-    async updateClient(@Body() updateClientDto: NewClientDto, @Res() res: Response, @Req() req: Request) {
-        const login = req.body.user.login;
-        return await this.clientService.updateClient(login, updateClientDto.firstName,updateClientDto.lastName,
-            updateClientDto.address, updateClientDto.phone, updateClientDto.mail,updateClientDto.postCode)
+    @Get("/infFarmerByLogin/:loginFarmer")
+    async infFarmerByLogin(@Param("loginFarmer") loginFarmer: string, @Req() req: Request, @Res() res: Response) {
+        return await this.clientService.infFarmerByLogin(loginFarmer).catch((err: any) => res.status(404).send(err));
+    }
+
+
+    @UseBefore(AuthenticationMiddleware)
+    @Delete("/deleteClient")
+    async removeClientByLogin(@Req() req: Request, @Res() res: Response) {
+        if (!req.user?.login) throw new BadRequestError("Missing login in token");
+        if (req.user?.role !== 'client') throw new ForbiddenError("You are not registrated as client. Operation is forbidden");
+        try {
+            await this.clientService.removeClientByLogin(req.user.login);
+            res.status(200).send({ message: "Client successfully deleted" });
+        } catch (err) {
+            res.status(404).send(err);
+        }
+    }
+
+    @UseBefore(AuthenticationMiddleware)
+    @Put("/updateClient")
+    async updateClient(@Body() updateClientDto: NewClientDto, @Req() req: Request, @Res() res: Response) {
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
+        return await this.clientService
+            .updateClient(
+                req.user.login,
+                updateClientDto.firstName,
+                updateClientDto.lastName,
+                updateClientDto.address,
+                updateClientDto.phone,
+                updateClientDto.mail,
+                updateClientDto.postCode
+            )
             .catch((err: any) => res.status(404).send(err));
     }
 
@@ -69,6 +94,12 @@ export default class ClientController {
         @Req() req: Request,
         @Res() res: Response,
     ) {
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
         return await this.clientService.InfSurprizeBacksByProduct(product);
     }
 
@@ -81,7 +112,14 @@ export default class ClientController {
         @Res() res: Response,
     )
     {
-        const login = req.body.user.login;
+
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
+        const login = req.user.login;
         return await this.clientService.createOrderSB(login, nameSB, loginFarmer);
     }
 
@@ -94,7 +132,14 @@ export default class ClientController {
         @Res() res: Response,
     )
     {
-        const login = req.body.user.login;
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
+
+        const login = req.user.login;
         return await this.clientService.removeOrderSB(login, nameSB, loginFarmer);
     }
 
@@ -118,7 +163,19 @@ async InfAllProducts(
 }
 
     @UseBefore(AuthenticationMiddleware)
-    @Get('/InfFarmersByProductToClient/:product')
+    @Get("/infAllFarmers")
+    async infAllFarmers(@Req() req: Request, @Res() res: Response) {
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        return await this.clientService.infAllFarmers().catch((err: any) => res.status(404).send(err));
+    }
+
+
+
+
+    @UseBefore(AuthenticationMiddleware)
+    @Get('/InfFarmersByProduct/:product')
     async InfFarmersByProduct(
         @Param('product') product: string,
         @Req() req: Request,
@@ -133,23 +190,30 @@ async InfAllProducts(
         @Req() req: Request,
         @Res() res: Response,
     ) {
-        const login = req.body.user.login;
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
+
+        const login = req.user.login;
         return await this.clientService.InfMyOrderedSurprizeBacks(login);
     }
 
     @UseBefore(AuthenticationMiddleware)
-    @Put('/updateClientPassword')
-    async updateClientPassword(
-        @Body() body: {password: string},
-        @Req() req: Request,
-        @Res() res: Response,
-    ) {
-        const login = req.body.user.login;
-        const newPassword = body.password
-        return await this.clientService.updateClientPassword(login, newPassword);
+    @Put("/updateClientPassword")
+    async updateClientPassword(@Body() body: { password: string }, @Req() req: Request, @Res() res: Response) {
+        if (!req.user?.login) {
+            throw new BadRequestError("Missing login in token");
+        }
+        if (req.user?.role !== 'client') {
+            throw new ForbiddenError("You are not registered as client. Operation is forbidden");
+        }
+
+
+        const { password } = body;
+        return await this.clientService.updateClientPassword(req.user?.login, password);
     }
-
-
-
-
+    
 }

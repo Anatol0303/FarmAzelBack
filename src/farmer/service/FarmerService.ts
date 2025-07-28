@@ -6,8 +6,9 @@ import {SurprizeBack} from "../../surprizeBack/model/SurprizeBack";
 import ClientDto from "../../client/dto/ClientDto";
 export default interface FarmerService {
 
-    registerFarmer(farmerRegDto: NewFarmerDto): Promise<FarmerDto>;
-
+    //registerFarmer(farmerRegDto: NewFarmerDto): Promise<FarmerDto>;
+    registerFarmer(farmerRegDto: NewFarmerDto): Promise<string>;
+    
     loginFarmer(login: string, password: string): Promise<string>;
 
     removeFarmerByLogin(login: string): Promise<FarmerDto>;
@@ -29,6 +30,12 @@ export default interface FarmerService {
 
     infAllFarmers(): Promise<FarmerDto[]>;
 
+    InfAllProducts(): Promise<String[]>;
+
     InfFarmersByProduct(product: string): Promise<String[]>
+
+    InfSurprizeBacksByFarmer(loginFarmer: string): Promise<SurprizeBackTo[]>;
+
+    infSBByNameSB(login: string, nameSB:string): Promise<SurprizeBackTo>;
 
 }
