@@ -76,7 +76,12 @@ const app = express();
 const PORT = 8080;
 
 app.use(cors());
+
 app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.send("API is working 🚀");
+});
 
 useExpressServer(app, {
     controllers: [ClientController, FarmerController],
