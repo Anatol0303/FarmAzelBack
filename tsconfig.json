@@ -110,5 +110,8 @@
     /* Skip type checking all .d.ts files. */
 
   },
-
+  "exclude": [
+    "tests",
+    "jest.config.ts"
+  ]
 }
